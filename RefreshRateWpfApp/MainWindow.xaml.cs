@@ -34,22 +34,39 @@ namespace RefreshRateWpfApp
 
         private unsafe void OnTimerTick(object sender, object e)
         {
+            this.textBlock.Text = GetTextForTextBlock();
+        }
+
+        private string GetTextForTextBlock()
+        {
             WindowInteropHelper helper = new WindowInteropHelper(this);
             IntPtr hwnd = helper.Handle;
 
             IntPtr hmonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+            if (hmonitor == IntPtr.Zero)
+            {
+                return "MonitorFromWindow returned NULL ☹";
+            }
 
             MONITORINFOEXW monitorInfo = new MONITORINFOEXW();
             monitorInfo.cbSize = (uint)Marshal.SizeOf<MONITORINFOEXW>();
 
             bool bResult = GetMonitorInfoW(hmonitor, ref monitorInfo);
+            if (!bResult)
+            {
+                return "GetMonitorInfoW returned FALSE ☹";
+            }
 
             DEVMODEW devMode = new DEVMODEW();
             devMode.dmSize = (ushort)Marshal.SizeOf<DEVMODEW>();
 
             bResult = EnumDisplaySettingsW(monitorInfo.szDevice, ENUM_CURRENT_SETTINGS, out devMode);
+            if (!bResult)
+            {
+                return "EnumDisplaySettingsW returned FALSE ☹";
+            }
 
-            this.textBlock.Text = string.Format("{0} x {1} @ {2}hz", devMode.dmPelsWidth, devMode.dmPelsHeight, devMode.dmDisplayFrequency);
+            return string.Format("{0} x {1} @ {2}hz", devMode.dmPelsWidth, devMode.dmPelsHeight, devMode.dmDisplayFrequency);
         }
 
         // MonitorFromWindow
