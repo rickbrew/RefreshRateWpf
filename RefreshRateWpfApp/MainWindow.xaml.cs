@@ -39,15 +39,19 @@ namespace RefreshRateWpfApp
 
         private string GetTextForTextBlock()
         {
+            // 1. Get the window handle ("HWND" in Win32 parlance)
             WindowInteropHelper helper = new WindowInteropHelper(this);
             IntPtr hwnd = helper.Handle;
 
+            // 2. Get a monitor handle ("HMONITOR") for the window. 
+            //    If the window is straddling more than one monitor, Windows will pick the "best" one.
             IntPtr hmonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
             if (hmonitor == IntPtr.Zero)
             {
                 return "MonitorFromWindow returned NULL ☹";
             }
 
+            // 3. Get more information about the monitor.
             MONITORINFOEXW monitorInfo = new MONITORINFOEXW();
             monitorInfo.cbSize = (uint)Marshal.SizeOf<MONITORINFOEXW>();
 
@@ -57,6 +61,7 @@ namespace RefreshRateWpfApp
                 return "GetMonitorInfoW returned FALSE ☹";
             }
 
+            // 4. Get the current display settings for that monitor, which includes the resolution and refresh rate.
             DEVMODEW devMode = new DEVMODEW();
             devMode.dmSize = (ushort)Marshal.SizeOf<DEVMODEW>();
 
@@ -66,6 +71,7 @@ namespace RefreshRateWpfApp
                 return "EnumDisplaySettingsW returned FALSE ☹";
             }
 
+            // Done!
             return string.Format("{0} x {1} @ {2}hz", devMode.dmPelsWidth, devMode.dmPelsHeight, devMode.dmDisplayFrequency);
         }
 
