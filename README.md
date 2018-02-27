@@ -3,4 +3,4 @@ A small example WPF app that shows how to call into clumsy Win32 APIs detect the
 
 See MainWindow.xaml.cs for the important bits of code.
 
-This code goes along with this blog post: https://blog.getpaint.net/2017/07/20/paint-net-4-0-17-is-now-available/
+This code goes along with this blog post: https://blog.getpaint.net/2017/08/12/win32-how-to-get-the-refresh-rate-for-a-window/
